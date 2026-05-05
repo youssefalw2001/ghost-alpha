@@ -1,6 +1,7 @@
 import AlphaDashboard from '../components/AlphaDashboard';
 import Backtester from '../components/Backtester';
 import Optimizer from '../components/Optimizer';
+import RadarDashboard from '../components/RadarDashboard';
 
 export default function HomePage() {
   return (
@@ -16,10 +17,10 @@ export default function HomePage() {
 
         <section className="hero">
           <div>
-            <div className="eyebrow"><span className="dot" /> Paper-mode crypto searcher</div>
+            <div className="eyebrow"><span className="dot" /> Public-data alpha radar</div>
             <h1>Your private alpha engine.</h1>
             <p className="lead">
-              Ghost Alpha watches routes, scores opportunities, backtests paper-mode results, and optimizes plans before real execution is enabled.
+              Ghost Alpha watches routes, smart wallets, fresh liquidity, and whale-before-pump signals, then backtests paper-mode results before real execution is enabled.
               The goal is simple: prove the data first, then automate only what survives testing.
             </p>
 
@@ -33,17 +34,18 @@ export default function HomePage() {
                 <div className="value">Locked</div>
               </div>
               <div className="card">
-                <div className="label">Target</div>
-                <div className="value">$2k+</div>
+                <div className="label">Radar</div>
+                <div className="value">Live</div>
               </div>
             </div>
 
             <div className="notice">
-              This app does not sandwich users, front-run victims, drain wallets, or auto-submit trades. It scans, models, backtests, and optimizes safe arbitrage-style signals first.
+              This app does not use private insider information, sandwich users, front-run victims, drain wallets, or auto-submit trades. It scans public on-chain/market data, models outcomes, and backtests first.
             </div>
           </div>
 
           <div>
+            <RadarDashboard />
             <AlphaDashboard />
             <Backtester />
             <Optimizer />
@@ -51,7 +53,7 @@ export default function HomePage() {
         </section>
 
         <footer className="footer">
-          Roadmap: saved paper-trading history, Telegram alerts, wallet watchlists, airdrop scanner, liquidation scanner, and manual approve-to-execute after the scanner proves profitable.
+          Roadmap: saved radar history, token outcome tracking, Telegram alerts, wallet watchlists, airdrop scanner, liquidation scanner, and manual approve-to-execute after the scanner proves profitable.
         </footer>
       </div>
     </main>
