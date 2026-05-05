@@ -10,6 +10,14 @@ const TYPE_LABELS = {
   paper_arbitrage: 'Paper route',
 };
 
+const TYPE_SIMPLE = {
+  funding_rate_arbitrage: 'A funding-rate idea. This means a futures market may be paying one side of the trade.',
+  solana_route_arbitrage: 'A Solana swap-route idea. This means the app found a possible price difference through Jupiter routes.',
+  stablecoin_arbitrage: 'A stablecoin spread idea. This checks whether stablecoins are slightly off peg against each other.',
+  evm_flashloan_template: 'A future flash-loan idea. This is only a template right now, not executable yet.',
+  paper_arbitrage: 'A paper route idea. This is a simulated opportunity only.',
+};
+
 function money(value) {
   return `$${Number(value || 0).toLocaleString(undefined, { maximumFractionDigits: 4 })}`;
 }
@@ -38,6 +46,11 @@ export default function AlphaDashboard() {
     return filtered.filter((item) => item.expectedNetUsd >= Number(minProfit || 0));
   }, [filtered, minProfit]);
 
+  const best = useMemo(() => {
+    if (!data?.opportunities?.length) return null;
+    return [...data.opportunities].sort((a, b) => Number(b.expectedNetUsd || 0) - Number(a.expectedNetUsd || 0))[0];
+  }, [data]);
+
   async function scan() {
     setLoading(true);
     setError('');
@@ -62,50 +75,86 @@ export default function AlphaDashboard() {
     <div className="panel">
       <div className="panelHead">
         <div>
-          <h2 className="panelTitle">Private opportunity scanner</h2>
+          <h2 className="panelTitle">Ghost Alpha scanner</h2>
           <p className="panelText">
-            Paper mode only. Ghost Alpha scans funding rates, Solana routes, stablecoins, and EVM flash-loan templates before any execution is enabled.
+            Simple meaning: this app looks for crypto opportunities, but it is only pretending/paper-testing right now. It does not trade yet.
           </p>
         </div>
-        <span className="pill">Paper mode</span>
+        <span className="pill">No real trades</span>
       </div>
+
+      <div className="opps">
+        <div className="opp" style={{ borderColor: 'rgba(110,231,183,.3)', background: 'rgba(110,231,183,.08)' }}>
+          <div className="oppTop">
+            <div>
+              <div className="label">What you are seeing</div>
+              <div className="oppTitle">The app is hunting for possible plays, not making money yet.</div>
+              <p className="panelText">
+                Think of it like radar. It says “this might be worth checking.” Later, after we track results, we decide what can be automated.
+              </p>
+            </div>
+            <span className="badge">Scanner only</span>
+          </div>
+        </div>
+      </div>
+
+      {best ? (
+        <div className="opps">
+          <article className="opp" style={{ borderColor: 'rgba(251,191,36,.35)', background: 'rgba(251,191,36,.08)' }}>
+            <div className="oppTop">
+              <div>
+                <div className="label">Best signal right now</div>
+                <div className="oppTitle">{best.title}</div>
+                <p className="panelText">{TYPE_SIMPLE[best.type] || 'This is a paper-mode signal.'}</p>
+              </div>
+              <span className="badge">{TYPE_LABELS[best.type] || best.type}</span>
+            </div>
+            <div className="oppGrid">
+              <div className="mini"><span className="label">Paper profit</span><b>{money(best.expectedNetUsd)}</b></div>
+              <div className="mini"><span className="label">Risk</span><b className={riskClass(best.risk)}>{best.risk}</b></div>
+              <div className="mini"><span className="label">Can trade now?</span><b>No</b></div>
+              <div className="mini"><span className="label">Next step</span><b>Track it</b></div>
+            </div>
+          </article>
+        </div>
+      ) : null}
 
       <div className="controls">
         <label className="field">
-          <span>Capital to model</span>
+          <span>Test amount</span>
           <input className="input" value={capital} onChange={(event) => setCapital(event.target.value)} />
         </label>
         <label className="field">
-          <span>Minimum net alert</span>
+          <span>Show only profit above</span>
           <input className="input" value={minProfit} onChange={(event) => setMinProfit(event.target.value)} />
         </label>
         <label className="field">
-          <span>Module filter</span>
+          <span>Type of signals</span>
           <select className="input" value={filter} onChange={(event) => setFilter(event.target.value)}>
-            <option value="all">All modules</option>
+            <option value="all">All signals</option>
             <option value="funding_rate_arbitrage">Funding rates</option>
-            <option value="solana_route_arbitrage">Solana routes</option>
+            <option value="solana_route_arbitrage">Solana swaps</option>
             <option value="stablecoin_arbitrage">Stablecoins</option>
-            <option value="evm_flashloan_template">EVM flash-loan templates</option>
+            <option value="evm_flashloan_template">Flash-loan ideas</option>
           </select>
         </label>
-        <button className="btn" onClick={scan} disabled={loading}>{loading ? 'Scanning...' : 'Run scan'}</button>
-        <button className="btn btn2" disabled>Execution locked</button>
+        <button className="btn" onClick={scan} disabled={loading}>{loading ? 'Scanning...' : 'Scan again'}</button>
+        <button className="btn btn2" disabled>Trading locked</button>
       </div>
 
       {error ? <div className="opps"><div className="opp risk-high">{error}</div></div> : null}
 
       <div className="grid stats" style={{ padding: 18 }}>
         <div className="card">
-          <div className="label">Visible opportunities</div>
+          <div className="label">Signals found</div>
           <div className="value">{filtered.length || data?.summary?.total || '—'}</div>
         </div>
         <div className="card">
-          <div className="label">Positive paper signals</div>
+          <div className="label">Look profitable on paper</div>
           <div className="value">{positives.length}</div>
         </div>
         <div className="card">
-          <div className="label">All-module estimated net</div>
+          <div className="label">Total paper profit</div>
           <div className="value">{money(data?.summary?.estimatedNetUsd)}</div>
         </div>
       </div>
@@ -127,7 +176,8 @@ export default function AlphaDashboard() {
             <div className="oppTop">
               <div>
                 <div className="oppTitle">{opp.title}</div>
-                <p className="panelText">{opp.route}</p>
+                <p className="panelText">{TYPE_SIMPLE[opp.type] || opp.route}</p>
+                <p className="panelText">Route: {opp.route}</p>
               </div>
               <div style={{ display: 'grid', gap: 8, justifyItems: 'end' }}>
                 <span className="badge">{TYPE_LABELS[opp.type] || opp.type}</span>
@@ -135,9 +185,9 @@ export default function AlphaDashboard() {
               </div>
             </div>
             <div className="oppGrid">
-              <div className="mini"><span className="label">Gross</span><b>{money(opp.expectedGrossUsd)}</b></div>
-              <div className="mini"><span className="label">Fees</span><b>{money(opp.estimatedFeesUsd)}</b></div>
-              <div className="mini"><span className="label">Net</span><b>{money(opp.expectedNetUsd)}</b></div>
+              <div className="mini"><span className="label">Before fees</span><b>{money(opp.expectedGrossUsd)}</b></div>
+              <div className="mini"><span className="label">Costs</span><b>{money(opp.estimatedFeesUsd)}</b></div>
+              <div className="mini"><span className="label">Paper profit</span><b>{money(opp.expectedNetUsd)}</b></div>
               <div className="mini"><span className="label">Risk</span><b className={riskClass(opp.risk)}>{opp.risk}</b></div>
             </div>
             <p className="panelText">{opp.notes}</p>
