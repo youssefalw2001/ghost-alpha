@@ -1,12 +1,41 @@
 # Ghost Alpha - Makanak WhatsApp MVP
 
-This repo now contains the simple free WhatsApp version of Makanak.
+This repo contains the simple free WhatsApp version of Makanak.
 
 Makanak lets a restaurant send one link to a customer. The customer fills in their delivery details, taps to share GPS location, and the app opens WhatsApp with a ready-made delivery address message for the restaurant.
 
 No paid credits. No Supabase. No backend. No Google Maps API key.
 
-## Demo links
+## GitHub Pages website
+
+The repo is configured to deploy as a GitHub Pages website with GitHub Actions.
+
+Expected live URL:
+
+```txt
+https://youssefalw2001.github.io/ghost-alpha/
+```
+
+Restaurant test links after deployment:
+
+```txt
+https://youssefalw2001.github.io/ghost-alpha/r/albasha/
+https://youssefalw2001.github.io/ghost-alpha/r/cafeaden/
+```
+
+If the site is not live yet, open the repo on GitHub, then go to:
+
+```txt
+Settings > Pages > Build and deployment > Source > GitHub Actions
+```
+
+Then open:
+
+```txt
+Actions > Deploy GitHub Pages > Run workflow
+```
+
+## Demo links inside the app
 
 ```txt
 /r/albasha
@@ -21,20 +50,6 @@ No paid credits. No Supabase. No backend. No Google Maps API key.
 3. Customer taps "use my current location".
 4. App creates Google Maps, Waze, and Apple Maps links.
 5. App opens WhatsApp with the full delivery card ready to send.
-```
-
-## Run locally
-
-```bash
-npm install
-npm run dev
-```
-
-Open:
-
-```txt
-http://localhost:3000
-http://localhost:3000/r/albasha
 ```
 
 ## Change restaurant WhatsApp numbers
@@ -53,7 +68,21 @@ Example:
 96777xxxxxxx
 ```
 
-## Add another restaurant
+## Run locally later, optional
+
+```bash
+npm install
+npm run dev
+```
+
+Open:
+
+```txt
+http://localhost:3000
+http://localhost:3000/r/albasha
+```
+
+## Add another restaurant later
 
 1. Add a restaurant object in `data/restaurants.ts`.
 2. Copy one of the folders inside `app/r/`.
