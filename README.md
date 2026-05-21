@@ -1,41 +1,29 @@
 # Ghost Alpha - Makanak WhatsApp MVP
 
-The repo is being converted into the Makanak WhatsApp delivery-location MVP.
+This repo now contains the simple free WhatsApp version of Makanak.
 
-Makanak lets a restaurant send one link to a customer. The customer shares GPS coordinates, area, nearest landmark, and building description. The app creates a WhatsApp-ready delivery card and charges the restaurant 1 credit per successful location card.
+Makanak lets a restaurant send one link to a customer. The customer fills in their delivery details, taps to share GPS location, and the app opens WhatsApp with a ready-made delivery address message for the restaurant.
 
-## Current repo status
+No paid credits. No Supabase. No backend. No Google Maps API key.
 
-`package.json` has been updated with Supabase support and a typecheck script.
-
-The connected GitHub tool successfully allowed updating existing files, but it blocked direct creation of new app files. The full app patch is available from the ChatGPT artifact named `ghost-alpha-makanak-patch.zip`.
-
-## Intended demo links after applying the patch
+## Demo links
 
 ```txt
 /r/albasha
 /r/cafeaden
-/admin
 ```
 
-Without Supabase env vars, the app runs in demo mode using local demo restaurants.
-
-## Monetization logic
+## How it works
 
 ```txt
-1 customer location card = 1 restaurant credit
+1. Restaurant sends its link to the customer.
+2. Customer enters name, phone, area, landmark, and building description.
+3. Customer taps "use my current location".
+4. App creates Google Maps, Waze, and Apple Maps links.
+5. App opens WhatsApp with the full delivery card ready to send.
 ```
 
-Suggested pricing:
-
-```txt
-Trial: 20 cards free
-Starter: $5 = 100 cards
-Pro: $10 = 250 cards
-Busy: $20 = 600 cards
-```
-
-## Run locally after applying the patch
+## Run locally
 
 ```bash
 npm install
@@ -45,16 +33,19 @@ npm run dev
 Open:
 
 ```txt
+http://localhost:3000
 http://localhost:3000/r/albasha
 ```
 
-## Add Supabase for paid credits
+## Change restaurant WhatsApp numbers
 
-1. Create a Supabase project.
-2. Run `supabase/schema.sql` in the SQL editor.
-3. Copy `.env.example` to `.env.local`.
-4. Add Supabase URL, service role key, and `ADMIN_PIN`.
-5. Replace demo WhatsApp numbers with real Yemen WhatsApp numbers in international format without `+`.
+Open:
+
+```txt
+data/restaurants.ts
+```
+
+Change the `whatsapp` field to the real Yemen WhatsApp number in international format without plus signs, spaces, or symbols.
 
 Example:
 
@@ -62,6 +53,11 @@ Example:
 96777xxxxxxx
 ```
 
-## How restaurants pay
+## Add another restaurant
 
-At MVP stage, collect payment manually through cash, ONE Cash, bank transfer, or exchange transfer. After payment, use `/admin` to add credits to the restaurant slug.
+1. Add a restaurant object in `data/restaurants.ts`.
+2. Copy one of the folders inside `app/r/`.
+3. Rename it to the restaurant slug.
+4. Change the slug used in the page file.
+
+Later, this can be upgraded to dynamic restaurant links and a database.
